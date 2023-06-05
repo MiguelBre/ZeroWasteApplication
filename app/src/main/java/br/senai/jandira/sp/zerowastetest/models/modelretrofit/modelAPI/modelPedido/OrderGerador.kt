@@ -8,7 +8,7 @@ data class OrderGerador(
     val MateriaisPedido: List<MateriaisPedido>,
     val created_at: String,
     val endereco: Address,
-    val finished_at: Any?,
+    val finished_at: String?,
     val id: Int,
     val id_catador: Int,
     val id_endereco: Int,

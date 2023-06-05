@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.jandira.sp.zerowastetest.api.ApiCalls
@@ -42,6 +41,7 @@ import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
 import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.Address
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserAddress
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelGeocode.Results
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
 import java.net.URLEncoder
@@ -49,22 +49,47 @@ import java.net.URLEncoder
 class CadastrarEnd : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ZeroWasteTestTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(120, 160, 87)
-                ) {
-                    CadastrarEndContent()
+
+        val retrofitApi = RetrofitApi.getMainApi()
+        val userCalls = retrofitApi.create(ApiCalls::class.java)
+        val sessionManager = SessionManager(this)
+        val authToken = "Bearer " + sessionManager.fetchAuthToken()
+        Log.i("testing_authToken", authToken)
+
+        userCalls.getUserData(authToken).enqueue(object : Callback<UserData>{
+            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+                if (response.isSuccessful){
+
+                    Log.i("testing id", response.body()!!.id.toString())
+
+                    setContent {
+                        ZeroWasteTestTheme {
+                            // A surface container using the 'background' color from the theme
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                color = Color(120, 160, 87)
+                            ) {
+                                CadastrarEndContent(response.body()!!.id, authToken)
+                            }
+                        }
+                    }
+
+                } else {
+                    Log.e("error_request", response.toString())
                 }
             }
-        }
+
+            override fun onFailure(call: Call<UserData>, t: Throwable) {
+                Log.e("error_connecting", t.message.toString())
+            }
+
+        })
+
     }
 }
 
 @Composable
-fun CadastrarEndContent() {
+fun CadastrarEndContent(userId: Int, authToken: String) {
 
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -75,10 +100,8 @@ fun CadastrarEndContent() {
     val userCalls = retrofitApi.create(ApiCalls::class.java)
     val cepCalls = retrofitCep.create(CepCalls::class.java)
     val geoCalls = retrofitGeocode.create(GeoCalls::class.java)
-    val sessionManager = SessionManager(context)
 
-    var authToken = "Bearer " + sessionManager.fetchAuthToken()
-    val userId = sessionManager.getUserId()
+    Log.i("user_id", userId.toString())
 
     var cepState by remember {
         mutableStateOf("")
@@ -460,8 +483,10 @@ fun CadastrarEndContent() {
                                                 val resultLatLong =
                                                     response.body()!!.results!![0].geometry!!
 
-                                                if (cepBody.complemento == "")
-                                                    cepBody.complemento = " "
+                                                Log.i("testing_geometry", resultLatLong.toString())
+
+                                                if (complementoState == "")
+                                                    complementoState = " "
 
                                                 val userAddress = Address(
 
@@ -470,7 +495,7 @@ fun CadastrarEndContent() {
                                                     bairro = cepBody.bairro,
                                                     cidade = cepBody.localidade,
                                                     estado = cepBody.uf,
-                                                    complemento = cepBody.complemento,
+                                                    complemento = complementoState,
                                                     numero = numeroState,
                                                     latitude = resultLatLong.latitude,
                                                     longitude = resultLatLong.longitude,
@@ -561,14 +586,5 @@ fun CadastrarEndContent() {
             contentDescription = "Imagem Ilustrativa",
             modifier = Modifier.align(CenterHorizontally)
         )
-    }
-}
-
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CadastrarEndPreview() {
-    ZeroWasteTestTheme {
-        CadastrarEndContent()
     }
 }

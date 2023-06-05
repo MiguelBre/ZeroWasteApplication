@@ -39,11 +39,13 @@ import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelMaterial.Materials
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelPedido.*
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserAddress
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
 import com.google.gson.Gson
 import io.socket.client.Socket
 import retrofit2.Call
 import retrofit2.Response
+import retrofit2.create
 
 class SolicitarColetaActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +55,8 @@ class SolicitarColetaActivity : ComponentActivity() {
             val sessionManager = SessionManager(this)
             val authToken = "Bearer " + sessionManager.fetchAuthToken()
             val cleanToken = sessionManager.fetchAuthToken()
-            val idUsuario = sessionManager.getUserId()
+//            val idUsuario = sessionManager.getUserId()
+            Log.i("Token", authToken)
 
             val socketHandler = SocketHandler()
             socketHandler.setSocket(cleanToken)
@@ -99,8 +102,8 @@ class SolicitarColetaActivity : ComponentActivity() {
 
             var lockOrder = false
 
-            val retrofitApi = RetrofitApi.getLogisticApi()
-            val orderApi = retrofitApi.create(LogisticCalls::class.java)
+            val logisticApi = RetrofitApi.getLogisticApi()
+            val orderApi = logisticApi.create(LogisticCalls::class.java)
 
             orderApi.getPedido(authToken)
                 .enqueue(object : Callback<List<OrderGerador>> {
@@ -129,13 +132,53 @@ class SolicitarColetaActivity : ComponentActivity() {
 
                 })
 
+            var userData by remember {
+                mutableStateOf(UserData())
+            }
+
+            var idUsuario by remember {
+                mutableStateOf(0)
+            }
+
+            var userTypeID by remember {
+                mutableStateOf(0)
+            }
+
+
+
             val api = RetrofitApi.getMainApi()
             val mainApi = api.create(ApiCalls::class.java)
 
             var list1: List<UserAddress>
             var list2: MaterialMessage
 
+            mainApi.getUserData(authToken).enqueue(object : Callback<UserData>{
 
+                override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+                    if (response.isSuccessful){
+
+                        userData = response.body()!!
+
+                        idUsuario = userData.id
+
+                        userTypeID = if (userData.catador!!.isEmpty()){
+                            userData.gerador!![0].id
+                        } else {
+                            userData.catador!![0].id
+                        }
+
+                    } else {
+
+                        Log.e("response.fail", response.toString())
+
+                    }
+                }
+
+                override fun onFailure(call: Call<UserData>, t: Throwable) {
+                    Log.e("response.fail", t.message.toString())
+                }
+
+            })
 
             mainApi.getEnderecoUsuario(
                 authToken,
@@ -147,9 +190,10 @@ class SolicitarColetaActivity : ComponentActivity() {
                         response: Response<List<UserAddress>>
                     ) {
                         Log.i("testing", idUsuario.toString())
-                        Log.i("endereco", response.body()!!.toString())
+                        Log.i("endereco", response.toString())
                         if (response.isSuccessful) {
                             list1 = response.body()!!
+                            Log.i("deu certo", "Ok")
 
                             mainApi.getMateriaisList().enqueue(object : Callback<MaterialMessage> {
                                 override fun onResponse(call: Call<MaterialMessage>, response: Response<MaterialMessage>) {
@@ -165,7 +209,7 @@ class SolicitarColetaActivity : ComponentActivity() {
 
                                                     ) {
 
-                                                    SolicitarColetaContent(lockOrder, order, list2, list1, mSocket)
+                                                    SolicitarColetaContent(lockOrder, order, list2, list1, mSocket, userTypeID, idUsuario)
                                                 }
                                             }
                                         }
@@ -196,7 +240,7 @@ class SolicitarColetaActivity : ComponentActivity() {
 }
 
 @Composable
-fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais: MaterialMessage, enderecos: List<UserAddress>, mSocket: Socket) {
+fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais: MaterialMessage, enderecos: List<UserAddress>, mSocket: Socket, idTipo: Int, idUsuario: Int) {
     Log.i("orders", orders.toString())
 
     var lockOrder by remember {
@@ -211,8 +255,7 @@ fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais
     val orderApi = retrofitApi.create(LogisticCalls::class.java)
     val context = LocalContext.current
     val authToken = "Bearer " + SessionManager(context).fetchAuthToken()
-    val userID = SessionManager(context).getUserId()
-    val idGerador = SessionManager(context).getUserIdType().toInt()
+    val userID = idUsuario
 
     var isDialogShown by remember {
         mutableStateOf(false)
@@ -485,7 +528,7 @@ fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais
                 onClick = {
                     val pedidos = PedidoCriado(
                         id_endereco = selectLocalId,
-                        id_gerador = idGerador,
+                        id_gerador = idTipo,
                         id_materiais = selectedMaterialsId.toString()
                             .substring(1, selectedMaterialsId.toString().length - 1).split(", ")
                             .map { it.toInt() },
@@ -493,7 +536,7 @@ fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais
                     )
 
                     Log.i("pedidos", pedidos.toString())
-                    Log.i("pedidos", idGerador.toString())
+                    Log.i("pedidos", idTipo.toString())
 
                     orderApi.storeOrder(
                         authToken,
@@ -519,7 +562,7 @@ fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais
                                     id_gerador = response.body()!!.id_gerador,
                                     id_endereco = response.body()!!.endereco.id,
                                     created_at = response.body()!!.created_at,
-                                    finished_at = response.body()!!.finished_at!!,
+                                    finished_at = "",
                                     id_catador = response.body()!!.id_catador,
                                     id_status = response.body()!!.id_status,
                                     MateriaisPedido = response.body()!!.id_material,
