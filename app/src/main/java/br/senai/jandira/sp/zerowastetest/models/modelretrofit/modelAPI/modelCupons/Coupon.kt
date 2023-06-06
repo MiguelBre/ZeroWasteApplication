@@ -1,6 +1,6 @@
 package br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons
 
-data class Cupom(
+data class Coupon(
     val id: Int,
     val nome: String,
     val descricao: String,
