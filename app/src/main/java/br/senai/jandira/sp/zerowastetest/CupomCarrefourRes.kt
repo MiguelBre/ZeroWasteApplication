@@ -1,10 +1,6 @@
-package com.example.telacupons
+package br.senai.jandira.sp.zerowastetest
 
 import android.content.Intent
-import android.graphics.Canvas
-import android.graphics.Path
-import android.graphics.PathDashPathEffect
-import android.graphics.PathEffect
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,29 +11,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.telacupons.ui.theme.TelaCuponsTheme
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
-import com.example.telacupons.MainActivity
-import com.example.telacupons.R
 
 
 class CupomCarrefourRes : ComponentActivity() {
@@ -60,9 +47,7 @@ class CupomCarrefourRes : ComponentActivity() {
 @Composable
 fun TelaCupomCarrefourRes() {
 
-    var context = LocalContext.current
-
-
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.padding(top = 10.dp),
@@ -270,12 +255,4 @@ fun TelaCupomCarrefourRes() {
     }
 
 
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun DefaultPreview5() {
-    TelaCuponsTheme() {
-        TelaCupomCarrefourRes()
-    }
 }

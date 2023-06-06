@@ -1,10 +1,10 @@
 package br.senai.jandira.sp.zerowastetest.api
 
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Coupon
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Pontos
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelPedido.*
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelRating.Media
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelRating.Rating
-import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.Pontos
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelGeocode.Geometry
 import retrofit2.Call
 import retrofit2.http.*

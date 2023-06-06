@@ -81,6 +81,8 @@
     <string name="finish_run">Finalizar</string>
     <string name="atleast1_address">O usuário deve ter no mínimo 1 endereço.</string>
     <string name="atleast1_material">O usuário deve ter no mínimo 1 material.</string>
+    <string name="text_coupon">Ganhe pontos para trocar com recompensas exclusivas com nossos parceiros,
+        acumule pontos fazendo  reciclagem ou coletando reciclagem</string>
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
@@ -93,4 +95,5 @@
     <string name="title_activity_edit_profile_catador">EditProfileCatadorActivity</string>
     <string name="title_activity_page_slider">PageSliderActivity</string>
     <string name="title_activity_aceitar_coleta">AceitarColetaActivity</string>
+    <string name="sair_cupom">Sair</string>
 </resources>

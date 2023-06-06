@@ -1,4 +1,4 @@
-package com.example.telacupons
+package br.senai.jandira.sp.zerowastetest
 
 
 import androidx.compose.foundation.layout.padding
@@ -29,8 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
-import com.example.telacupons.ui.theme.TelaCuponsTheme
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -38,51 +36,31 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Box
-import br.senai.jandira.sp.zerowastetest.TelaCupomRes
-import com.example.telacupons.api.LogisticCalls
-import com.example.telacupons.api.RetrofitApi
-import com.example.telacupons.model.Coupon
-import com.example.telacupons.model.Pontos
+import br.senai.jandira.sp.zerowastetest.api.LogisticCalls
+import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Coupon
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Pontos
+import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
+import com.example.telacupons.CupomActivity
+import com.example.telacupons.Dialogs
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class MainActivity : ComponentActivity() {
+class TelaPontos : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val retrofitApi = RetrofitApi.getLogisticApi()
         val orderApi = retrofitApi.create(LogisticCalls::class.java)
 
-        var pontos = Pontos(
-            pontos = 0
-        )
+        var pontos: Pontos
 
+        var unreedem: List<Coupon>
 
-
-        var unreedem = listOf(
-            Coupon(
-                id = 0,
-                nome = "",
-                codigo = "",
-                pontos = 0,
-                criterios = "",
-                descricao = ""
-            )
-        )
-
-        var reedem = listOf(
-            Coupon(
-                id = 0,
-                nome = "",
-                codigo = "",
-                pontos = 0,
-                criterios = "",
-                descricao = ""
-            )
-        )
+        var reedem: List<Coupon>
 
 
 
@@ -113,7 +91,7 @@ class MainActivity : ComponentActivity() {
                                                         pontos = responsePonto.body()!!
 
                                                         setContent {
-                                                            TelaCuponsTheme {
+                                                            ZeroWasteTestTheme {
                                                                 // A surface container using the 'background' color from the theme
                                                                 Surface(
                                                                     modifier = Modifier.fillMaxSize(),
@@ -206,37 +184,13 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
 
     var isVisible by remember { mutableStateOf(false) }
 
-
-    val selectedRow = remember { mutableStateOf(-1) }
-
     val scrollState = rememberScrollState()
 
-
-    fun showRowDetails(rowId: Int) {
-        selectedRow.value = rowId
-    }
-
-    fun hideRowDetails() {
-        selectedRow.value = -1
-    }
-
-
-    var Pesquisastate by remember {
-        mutableStateOf("")
-    }
-
-    val navController = rememberNavController()
-
-    // cor 2
-    var VERDE by remember {
-        mutableStateOf(Color(8, 113, 19))
-    }
-
-    var DisponiveisClick by remember {
+    var disponiveisClick by remember {
         mutableStateOf(true)
     }
 
-    var ResgatadosClick by remember {
+    var resgatadosClick by remember {
         mutableStateOf(false)
     }
 
@@ -314,8 +268,8 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
 
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = stringResource(id = R.string.foto_logo),
+            painter = painterResource(id = R.drawable.app_logo),
+            contentDescription = "",
             modifier = Modifier
                 .align(CenterHorizontally)
                 .padding(top = 5.dp)
@@ -368,7 +322,7 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
 
 
         Text(
-            text = stringResource(id = R.string.texto),
+            text = stringResource(id = R.string.text_coupon),
             modifier = Modifier.padding(start = 5.dp, end = 5.dp),
             color = Color.Black,
             fontSize = 14.sp,
@@ -401,8 +355,8 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
                     )
                     .clickable {
                         selectedWord = "disponiveis"
-                        DisponiveisClick = true
-                        ResgatadosClick = false
+                        disponiveisClick = true
+                        resgatadosClick = false
                         isVisible = true
                         color1 = Color(53, 155, 55)
                         color2 = Color.Transparent
@@ -427,8 +381,8 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
                         )
                         .clickable {
                             selectedWord = "resgatados"
-                            DisponiveisClick = false
-                            ResgatadosClick = true
+                            disponiveisClick = false
+                            resgatadosClick = true
                             isVisible = false
                             color2 = Color(181, 116, 48)
                             color1 = Color.Transparent
@@ -485,7 +439,7 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
 
                                 Column(
                                     modifier = Modifier.padding(start = 80.dp, top = 15.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalAlignment = CenterHorizontally
                                 )
                                 {
 
@@ -612,7 +566,7 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
 
                                 Column(
                                     modifier = Modifier.padding(start = 80.dp, top = 15.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalAlignment = CenterHorizontally
                                 )
                                 {
 
