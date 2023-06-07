@@ -15,6 +15,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,10 +29,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -75,6 +78,7 @@ class EditMyProfileActivity : ComponentActivity() {
 fun ProfileContent() {
 
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     val retrofit = RetrofitApi.getMainApi()
     val apiCalls = retrofit.create(ApiCalls::class.java)
@@ -136,11 +140,11 @@ fun ProfileContent() {
         mutableStateOf(Size.Zero)
     }
 
+    val materialsList = mutableListOf<Materials>()
 
     apiCalls.getUserData(authToken).enqueue(object : Callback<UserData> {
 
         override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
-
 
             dadosUsuario = response.body()!!
             username =
@@ -152,8 +156,27 @@ fun ProfileContent() {
 
             enderecoUsuario = dadosUsuario.endereco_usuario!![0].endereco!!.cep
 
-            if (userType == "Catador")
-                materiaisCatador = dadosUsuario.catador!![0].materiais_catador!!
+            if (userType == "Catador"){
+
+                apiCalls.getMateriaisNotCollected(id = dadosUsuario.catador?.get(0)?.id).enqueue(object : Callback<List<Materials>> {
+                    override fun onResponse(call: Call<List<Materials>>, response: Response<List<Materials>>) {
+
+                        for (i in response.body()!!) {
+
+                            materialsList.add(i)
+
+                        }
+
+                    }
+
+                    override fun onFailure(call: Call<List<Materials>>, t: Throwable) {
+                        Log.e("fail_getMaterials", t.message.toString())
+                    }
+
+                })
+
+            }
+
 
             cpfState = if (dadosUsuario.pessoa_fisica!!.isEmpty()) {
                 dadosUsuario.pessoa_juridica!![0].cnpj
@@ -173,25 +196,25 @@ fun ProfileContent() {
 
     })
 
-    val materialsList = mutableListOf<Materials>()
-    Log.i("teste", dadosUsuario.catador?.get(0)?.id.toString())
 
-    apiCalls.getMateriaisNotCollected(id = dadosUsuario.catador?.get(0)?.id).enqueue(object : Callback<List<Materials>> {
-        override fun onResponse(call: Call<List<Materials>>, response: Response<List<Materials>>) {
+//    Log.i("teste", dadosUsuario.catador?.get(0)?.id.toString())
 
-            for (i in response.body()!!) {
-
-                materialsList.add(i)
-
-            }
-
-        }
-
-        override fun onFailure(call: Call<List<Materials>>, t: Throwable) {
-            Log.e("fail_getMaterials", t.message.toString())
-        }
-
-    })
+//    apiCalls.getMateriaisNotCollected(id = dadosUsuario.catador?.get(0)?.id).enqueue(object : Callback<List<Materials>> {
+//        override fun onResponse(call: Call<List<Materials>>, response: Response<List<Materials>>) {
+//
+//            for (i in response.body()!!) {
+//
+//                materialsList.add(i)
+//
+//            }
+//
+//        }
+//
+//        override fun onFailure(call: Call<List<Materials>>, t: Throwable) {
+//            Log.e("fail_getMaterials", t.message.toString())
+//        }
+//
+//    })
 
     var emailState by remember {
         mutableStateOf("...")
@@ -965,7 +988,15 @@ fun ProfileContent() {
                             }
                         },
                         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(

@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -420,7 +421,15 @@ fun ZeroWasteApplication() {
                     ),
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White)
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
+                    )
                 )
                 if (nameError) {
                     Text(
@@ -555,6 +564,15 @@ fun ZeroWasteApplication() {
                         topEnd = 0.dp,
                         bottomStart = 10.dp,
                         bottomEnd = 10.dp
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
                     )
                 )
                 if (cpfError) {
@@ -597,7 +615,16 @@ fun ZeroWasteApplication() {
                         }
                     ),
                     singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
+                    )
                 )
                 if (emailError) {
                     Text(
@@ -644,7 +671,16 @@ fun ZeroWasteApplication() {
                         }
                     ),
                     singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
+                    )
                 )
                 if (phoneError) {
                     Text(
@@ -688,7 +724,16 @@ fun ZeroWasteApplication() {
                                 }
                             ),
                             singleLine = true,
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = colorResource(
+                                    id = R.color.light_green
+                                ),
+                                cursorColor = colorResource(
+                                    id = R.color.dark_green
+                                ),
+                                backgroundColor = Color.White
+                            )
                         )
                         if (cepError) {
                             Text(
@@ -730,7 +775,16 @@ fun ZeroWasteApplication() {
                                 }
                             ),
                             singleLine = true,
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = colorResource(
+                                    id = R.color.light_green
+                                ),
+                                cursorColor = colorResource(
+                                    id = R.color.dark_green
+                                ),
+                                backgroundColor = Color.White
+                            )
                         )
                         if (resNumError) {
                             Text(
@@ -773,7 +827,16 @@ fun ZeroWasteApplication() {
                         }
                     ),
                     singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -898,7 +961,16 @@ fun ZeroWasteApplication() {
                         }
                     ),
                     singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
+                    )
                 )
                 if (passError) {
                     Text(
@@ -961,7 +1033,16 @@ fun ZeroWasteApplication() {
                         }
                     ),
                     singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = colorResource(
+                            id = R.color.light_green
+                        ),
+                        cursorColor = colorResource(
+                            id = R.color.dark_green
+                        ),
+                        backgroundColor = Color.White
+                    )
                 )
                 if (confirmPassError) {
                     Text(

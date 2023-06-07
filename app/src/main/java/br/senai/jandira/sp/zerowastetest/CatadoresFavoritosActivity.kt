@@ -82,7 +82,7 @@ class CatadoresFavoritosActivity : ComponentActivity() {
                                         }
                                     }
                                 } else {
-                                    Log.e("Err_response_Favoritos", response.toString())
+                                    Log.e("Err_response_Favoritos", responseFavoritos.toString())
                                 }
                             }
 

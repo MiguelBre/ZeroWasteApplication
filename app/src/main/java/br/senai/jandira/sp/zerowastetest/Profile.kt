@@ -72,8 +72,6 @@ class Profile : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         setContent {
             ZeroWasteTestTheme {
                 // A surface container using the 'background' color from the theme
@@ -144,7 +142,7 @@ fun OthersProfileContent() {
                                 logisticApi.rate(
                                     Rating(
                                         id_gerador = 1,
-                                        id_catador = user.catador!![0].id.toInt(),
+                                        id_catador = user.catador!![0].id,
                                         nota = it.toInt()
                                     ), authToken
                                 )
@@ -169,7 +167,7 @@ fun OthersProfileContent() {
                                 logisticApi.updateRate(
                                     Rating(
                                         id_gerador = 1,
-                                        id_catador = user.catador!![0].id.toInt(),
+                                        id_catador = user.catador!![0].id,
                                         nota = it.roundToInt()
                                     ), authToken
                                 )

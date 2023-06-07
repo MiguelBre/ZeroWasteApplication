@@ -1,5 +1,6 @@
 package br.senai.jandira.sp.zerowastetest
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -360,11 +361,19 @@ fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais
 
     ) {
 
+        Image(painter = painterResource(id = R.drawable.back_arrow),
+            contentDescription = "Voltar para página inicial",
+            modifier = Modifier
+                .size(26.dp)
+                .clickable {
+                    val intent = Intent(context, HomeActivity::class.java)
+                    context.startActivity(intent)
+                })
+
         Text(
             text = stringResource(id = R.string.solicite_coleta),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
+                .fillMaxWidth(),
             fontSize = 19.sp,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center,
@@ -712,6 +721,7 @@ fun SolicitarColetaContent(lockedOrder: Boolean, orders: OrderGerador, materiais
                                             message = "Não foi possível cancelar pedido"
                                             isDialogShown = true
                                         } else{
+                                            Log.e("Err_cancelarPedido", response.toString())
                                             lockOrder = false
                                         }
                                     }

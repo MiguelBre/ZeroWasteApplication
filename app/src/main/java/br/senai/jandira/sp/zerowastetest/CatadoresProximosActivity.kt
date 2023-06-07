@@ -63,37 +63,61 @@ class CatadoresProximosActivity : ComponentActivity() {
         val sessionManager = SessionManager(this)
         val authToken = "Bearer " + sessionManager.fetchAuthToken()
         var enderecos: List<UserAddress>
+        var idUser: Int
 
-        mainApi.getEnderecoUsuario(
-            authToken,
-            3
-        )
-            .enqueue(object : Callback<List<UserAddress>> {
-                override fun onResponse(
-                    call: Call<List<UserAddress>>,
-                    response: Response<List<UserAddress>>
-                ) {
-                    if (response.isSuccessful) {
-                        enderecos = response.body()!!
+        mainApi.getUserData(authToken).enqueue(object : Callback<UserData>{
+            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
 
-                        setContent {
-                            ZeroWasteTestTheme {
-                                Surface(
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = Color(8, 113, 19),
-                                ) {
-                                    CatadoresProximosContent(enderecos, authToken)
+                if(response.isSuccessful){
+
+                    idUser = response.body()!!.id
+
+                    mainApi.getEnderecoUsuario(
+                        authToken,
+                        idUser
+                    )
+                        .enqueue(object : Callback<List<UserAddress>> {
+                            override fun onResponse(
+                                call: Call<List<UserAddress>>,
+                                response: Response<List<UserAddress>>
+                            ) {
+                                if (response.isSuccessful) {
+                                    enderecos = response.body()!!
+
+                                    setContent {
+                                        ZeroWasteTestTheme {
+                                            Surface(
+                                                modifier = Modifier.fillMaxSize(),
+                                                color = Color(8, 113, 19),
+                                            ) {
+                                                CatadoresProximosContent(enderecos, authToken)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Log.e("Err_responseAddress", response.toString())
                                 }
                             }
-                        }
-                    }
+
+                            override fun onFailure(call: Call<List<UserAddress>>, t: Throwable) {
+                                Log.i("fail", t.message.toString())
+                            }
+
+                        })
+
+                } else {
+                    Log.e("Err_response", response.toString())
                 }
 
-                override fun onFailure(call: Call<List<UserAddress>>, t: Throwable) {
-                    Log.i("fail", t.message.toString())
-                }
+            }
 
-            })
+            override fun onFailure(call: Call<UserData>, t: Throwable) {
+                Log.e("Err_getUserData", t.message.toString())
+            }
+
+        })
+
+
     }
 }
 

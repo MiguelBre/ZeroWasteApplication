@@ -357,7 +357,8 @@ fun TelaCuponsContent(
                     .clickable {
                         val intent = Intent(context, HomeActivity::class.java)
                         context.startActivity(intent)
-                    })
+                    }
+            )
 
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
