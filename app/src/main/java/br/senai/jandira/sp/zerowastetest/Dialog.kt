@@ -46,7 +46,7 @@ fun Dialogs(
                 ),
             shape = RoundedCornerShape(15.dp), elevation = 20.dp
         ) {
-            Column(modifier = Modifier.padding(top = 7.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.padding(top = 7.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
 
                 Text(
                     text = "Deseja Prosseguir?", fontSize = 17.sp, modifier = Modifier.padding(top = 8.dp)
@@ -78,8 +78,8 @@ fun Dialogs(
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
                     )
                 {
 
@@ -87,8 +87,7 @@ fun Dialogs(
                         onClick =  {
                             onConfirm(coupon.id)
                         }, modifier = Modifier
-                            .width(230.dp)
-                            .padding(start = 10.dp)
+                            .fillMaxWidth(0.6f)
                             .height(36.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(8, 113, 19))
                     )
@@ -100,13 +99,11 @@ fun Dialogs(
 
                     }
 
-                    Spacer(modifier = Modifier.padding(5.dp))
-
                     Button(
                         onClick =  {
                             onDismiss()
                         }, modifier = Modifier
-                            .width(80.dp)
+                            .fillMaxWidth(0.7f)
                             .height(36.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(210, 49, 28))
                     )

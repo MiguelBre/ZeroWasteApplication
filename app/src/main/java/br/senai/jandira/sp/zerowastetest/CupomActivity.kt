@@ -1,4 +1,4 @@
-package com.example.telacupons
+package br.senai.jandira.sp.zerowastetest
 
 import android.content.Intent
 import android.os.Bundle
@@ -24,8 +24,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
-import br.senai.jandira.sp.zerowastetest.MainActivity
-import br.senai.jandira.sp.zerowastetest.R
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Coupon
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
 import com.google.gson.Gson
@@ -214,7 +212,7 @@ fun TelaCupom() {
         ) {
             Button(
                 onClick = {
-                    val navigateToCupons = Intent(context, MainActivity::class.java)
+                    val navigateToCupons = Intent(context, TelaPontos::class.java)
                     context.startActivity(navigateToCupons)
                 },
                 modifier = Modifier

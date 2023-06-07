@@ -721,7 +721,12 @@ fun ProfileActivityBody() {
                             Row(modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp)
-                                .clickable { requestPickupClick = !requestPickupClick }) {
+                                .clickable {
+                                    requestPickupClick = !requestPickupClick
+
+                                    val toSolicitarColetaActivity = Intent(context, SolicitarColetaActivity::class.java)
+                                    context.startActivity(toSolicitarColetaActivity)
+                                }) {
                                 Text(
                                     text = stringResource(id = R.string.request_pickup),
                                     color = verifyClick(
@@ -734,11 +739,9 @@ fun ProfileActivityBody() {
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp)
                                 .clickable {
-
                                     requestPickupClick = !requestPickupClick
 
-                                    val toAceitarColetaActivity =
-                                        Intent(context, AceitarColetaActivity::class.java)
+                                    val toAceitarColetaActivity = Intent(context, AceitarColetaActivity::class.java)
                                     context.startActivity(toAceitarColetaActivity)
 
                                 }) {
@@ -773,7 +776,12 @@ fun ProfileActivityBody() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp, bottom = 10.dp)
-                                    .clickable { mapCatadoresClick = !mapCatadoresClick }) {
+                                    .clickable {
+                                        mapCatadoresClick = !mapCatadoresClick
+                                        val toCatadoresProximosActivity =
+                                            Intent(context, CatadoresProximosActivity::class.java)
+                                        context.startActivity(toCatadoresProximosActivity)
+                                    }) {
                                 Text(
                                     text = stringResource(id = R.string.map_close_catadores),
                                     color = verifyClick(
@@ -791,13 +799,14 @@ fun ProfileActivityBody() {
                         .height(55.dp)
                         .padding(start = 8.dp, end = 20.dp)
                         .clickable {
-                            /*TODO*/
+                            val toCouponActivity = Intent(context, TelaPontos::class.java)
+                            context.startActivity(toCouponActivity)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.prize_icon),
-                        contentDescription = "Página inicial",
+                        contentDescription = "Tela de pontos e cupons",
                         modifier = Modifier
                             .size(55.dp)
                             .padding(start = 12.dp, end = 4.dp)

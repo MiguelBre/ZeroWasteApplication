@@ -70,7 +70,7 @@
     <string name="segundo">Selecione os materiais que serão recolhidos</string>
     <string name="visualizar_enderecos">Visualizar</string>
     <string name="solicitacoes_coletas">Solicitações de Coletas</string>
-    <string name="text_homeactivity">Seja bem vindo ao nosso website, caso não saiba por onde começar, clique no botão "Saiba mais" para ter uma representação em slides.</string>
+    <string name="text_homeactivity">Seja bem-vindo ao nosso website, caso não saiba por onde começar, clique no botão "Saiba mais" para ter uma representação em slides.</string>
     <string name="empty_pickuprequests">Você não possui nenhum chamado</string>
     <string name="accept_request">Aceitar chamado</string>
     <string name="distance">Distância</string>
@@ -83,6 +83,7 @@
     <string name="atleast1_material">O usuário deve ter no mínimo 1 material.</string>
     <string name="text_coupon">Ganhe pontos para trocar com recompensas exclusivas com nossos parceiros,
         acumule pontos fazendo  reciclagem ou coletando reciclagem</string>
+    <string name="not_found_reedemed">Nenhum cupom resgatado</string>
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus

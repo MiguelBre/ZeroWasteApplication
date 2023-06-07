@@ -470,7 +470,6 @@ fun HomeContent() {
                                 .padding(top = 10.dp, bottom = 10.dp)
                                 .clickable {
                                     requestPickupClick = !requestPickupClick
-                                    Log.i("teste_idGerador", sessionManager.getUserIdType().toString())
 
                                     val toSolicitarColetaActivity =
                                         Intent(context, SolicitarColetaActivity::class.java)

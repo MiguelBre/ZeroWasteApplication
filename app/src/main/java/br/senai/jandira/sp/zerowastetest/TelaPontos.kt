@@ -36,13 +36,14 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextDecoration
 import br.senai.jandira.sp.zerowastetest.api.LogisticCalls
 import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
 import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Coupon
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Pontos
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
-import com.example.telacupons.CupomActivity
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -66,10 +67,6 @@ class TelaPontos : ComponentActivity() {
 
         var reedem: List<Coupon>
 
-
-
-
-
         orderApi.getUnreedemCoupons(authToken)
             .enqueue(object : Callback<List<Coupon>> {
                 override fun onResponse(
@@ -91,7 +88,10 @@ class TelaPontos : ComponentActivity() {
 
                                         orderApi.getPontos(authToken)
                                             .enqueue(object : Callback<Pontos> {
-                                                override fun onResponse(call: Call<Pontos>, responsePonto: Response<Pontos>) {
+                                                override fun onResponse(
+                                                    call: Call<Pontos>,
+                                                    responsePonto: Response<Pontos>
+                                                ) {
                                                     if (responsePonto.isSuccessful) {
                                                         pontos = responsePonto.body()!!
 
@@ -102,21 +102,89 @@ class TelaPontos : ComponentActivity() {
                                                                     modifier = Modifier.fillMaxSize(),
                                                                     color = Color(255, 255, 255)
                                                                 ) {
-                                                                    Greeting(pontos, unreedem, reedem, authToken)
+                                                                    TelaCuponsContent(
+                                                                        pontos,
+                                                                        unreedem,
+                                                                        reedem,
+                                                                        authToken
+                                                                    )
                                                                 }
                                                             }
                                                         }
 
                                                     } else {
-                                                        Log.e("Err_getPontos", responsePonto.toString())
+                                                        Log.e(
+                                                            "Err_getPontos",
+                                                            responsePonto.toString()
+                                                        )
                                                     }
 
                                                 }
 
-                                                override fun onFailure(call: Call<Pontos>, t: Throwable) {
+                                                override fun onFailure(
+                                                    call: Call<Pontos>,
+                                                    t: Throwable
+                                                ) {
                                                     Log.i("fail", t.message.toString())
                                                 }
                                             })
+                                    } else if (responseReedem.code() == 404) {
+                                        Log.i("Not found Coupon", responseReedem.toString())
+
+                                        reedem = listOf(
+                                            Coupon(
+                                                0,
+                                                "",
+                                                "",
+                                                "",
+                                                0,
+                                                ""
+                                            )
+                                        )
+
+                                        orderApi.getPontos(authToken)
+                                            .enqueue(object : Callback<Pontos> {
+                                                override fun onResponse(
+                                                    call: Call<Pontos>,
+                                                    responsePonto: Response<Pontos>
+                                                ) {
+                                                    if (responsePonto.isSuccessful) {
+                                                        pontos = responsePonto.body()!!
+
+                                                        setContent {
+                                                            ZeroWasteTestTheme {
+                                                                // A surface container using the 'background' color from the theme
+                                                                Surface(
+                                                                    modifier = Modifier.fillMaxSize(),
+                                                                    color = Color(255, 255, 255)
+                                                                ) {
+                                                                    TelaCuponsContent(
+                                                                        pontos,
+                                                                        unreedem,
+                                                                        reedem,
+                                                                        authToken
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+
+                                                    } else {
+                                                        Log.e(
+                                                            "Err_getPontos",
+                                                            responsePonto.toString()
+                                                        )
+                                                    }
+
+                                                }
+
+                                                override fun onFailure(
+                                                    call: Call<Pontos>,
+                                                    t: Throwable
+                                                ) {
+                                                    Log.i("fail", t.message.toString())
+                                                }
+                                            })
+
                                     } else {
                                         Log.e("Err_getRedeemCoupon", responseReedem.toString())
                                     }
@@ -137,8 +205,6 @@ class TelaPontos : ComponentActivity() {
                 }
 
             })
-
-
 
 
     }
@@ -182,7 +248,12 @@ fun RoundedTextField(
 
 
 @Composable
-fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authToken: String) {
+fun TelaCuponsContent(
+    pontos: Pontos,
+    unreedem: List<Coupon>,
+    reedem: List<Coupon>,
+    authToken: String
+) {
 
     val retrofitApi = RetrofitApi.getLogisticApi()
     val orderApi = retrofitApi.create(LogisticCalls::class.java)
@@ -215,17 +286,19 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
     var showAlert by remember { mutableStateOf(false) }
 
     var selectedCupom by remember {
-        mutableStateOf(Coupon(
-            nome = "",
-            id = 0,
-            descricao = "",
-            criterios = "",
-            pontos = 0,
-            codigo = ""
-        ))
+        mutableStateOf(
+            Coupon(
+                nome = "",
+                id = 0,
+                descricao = "",
+                criterios = "",
+                pontos = 0,
+                codigo = ""
+            )
+        )
     }
 
-    if (showAlert){
+    if (showAlert) {
         Dialogs(onDismiss = { showAlert = false }, onConfirm = {
             orderApi.reedemCoupon(authToken, it)
                 .enqueue(object : Callback<Coupon> {
@@ -233,13 +306,17 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
                         call: Call<Coupon>,
                         response: Response<Coupon>
                     ) {
-                        if (response.isSuccessful){
+                        if (response.isSuccessful) {
                             val intent = Intent(context, CupomActivity::class.java)
                             intent.putExtra("coupon", Gson().toJson(response.body()!!))
 
                             context.startActivity(intent)
-                        } else{
-                            Toast.makeText(context, "Você não tem pontos suficientes", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Você não tem pontos suficientes",
+                                Toast.LENGTH_LONG
+                            ).show()
 
                         }
 
@@ -249,7 +326,7 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
                         call: Call<Coupon>,
                         t: Throwable
                     ) {
-                        Log.i("fail", t.message.toString())
+                        Log.e("fail", t.message.toString())
                     }
 
                 })
@@ -261,7 +338,7 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
     }
 
     if (showCoupon) {
-        TelaCupomRes(coupon = selectedCupom, onDismiss = { showCoupon = false})
+        TelaCupomRes(coupon = selectedCupom, onDismiss = { showCoupon = false })
     }
 
     Column(
@@ -272,15 +349,26 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
 
 
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.app_logo),
-            contentDescription = "",
-            modifier = Modifier
-                .align(CenterHorizontally)
-                .padding(top = 5.dp)
-                .width(60.dp)
-                .height(51.dp)
-        )
+
+            Image(painter = painterResource(id = R.drawable.back_arrow),
+                contentDescription = "Voltar para página inicial",
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        val intent = Intent(context, HomeActivity::class.java)
+                        context.startActivity(intent)
+                    })
+
+            Image(
+                painter = painterResource(id = R.drawable.app_logo),
+                contentDescription = "Logo do Aplicativo",
+                modifier = Modifier
+                    .padding(top = 5.dp)
+                    .align(CenterHorizontally)
+                    .width(60.dp)
+                    .height(51.dp)
+            )
+
 
         Text(
             text = buildAnnotatedString {
@@ -323,9 +411,6 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
             onValueChange = { searchText = it }
         )
 
-
-
-
         Text(
             text = stringResource(id = R.string.text_coupon),
             modifier = Modifier.padding(start = 5.dp, end = 5.dp),
@@ -334,7 +419,6 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center
         )
-
 
         Row(
             modifier = Modifier
@@ -404,6 +488,8 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         Column(
             modifier = Modifier.verticalScroll(scrollState)
         ) {
@@ -414,75 +500,79 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
                     unreedem.forEach {
                         Box(
                             modifier = Modifier
-                                .height(130.dp)
+                                .fillMaxHeight(0.3f)
                                 .fillMaxWidth()
                         ) {
+
                             Card(
                                 modifier = Modifier
-                                    .width(400.dp)
-                                    .height(130.dp)
-                                    .padding(start = 25.dp, end = 25.dp, top = 15.dp),
+                                    .fillMaxSize()
+                                    .padding(start = 16.dp, end = 16.dp, top = 15.dp),
                                 shape = RoundedCornerShape(15.dp),
                                 backgroundColor = Color(53, 155, 55)
 
                             ) {
 
-                                Row(
-                                    modifier = Modifier.padding(bottom = 25.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Image(
-                                        painter = painterResource(R.drawable.logo_sem_fundo),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(120.dp)
-                                            .padding(start = 10.dp)
-
-                                    )
-
-                                }
-
-                                Column(
-                                    modifier = Modifier.padding(start = 80.dp, top = 15.dp),
-                                    horizontalAlignment = CenterHorizontally
-                                )
-                                {
+                                Column(modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(4.dp)) {
 
                                     Text(
-                                        modifier = Modifier.fillMaxWidth(0.9F),
+                                        modifier = Modifier.fillMaxWidth(),
                                         textAlign = TextAlign.Center,
                                         text = it.nome,
-                                        fontSize = 16.sp,
+                                        fontSize = 20.sp,
                                         color = Color.White
                                     )
 
-                                    Row() {
-
-                                        Box(
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(bottom = 10.dp)
+                                            .fillMaxWidth()
+                                            .fillMaxHeight(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Image(
+                                            painter = painterResource(R.drawable.logo_sem_fundo),
+                                            contentDescription = null,
                                             modifier = Modifier
-                                                .width(95.dp)
-                                                .height(80.dp)
+                                                .width(160.dp)
+                                                .height(120.dp)
+                                        )
+
+                                        Column(
+                                            modifier = Modifier
+                                                .padding(top = 15.dp, end = 36.dp)
+                                                .fillMaxWidth(),
+                                            horizontalAlignment = CenterHorizontally
                                         ) {
-                                            Image(
-                                                painter = painterResource(R.drawable.retangulo),
-                                                contentDescription = "Imagem",
+
+                                            Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .height(80.dp)
-                                            )
-                                            Text(
-                                                text = "${it.pontos} pontos",
-                                                modifier = Modifier
-                                                    .align(Alignment.Center),
-                                                color = Color.White,
-                                                fontSize = 14.sp
-                                            )
-                                        }
+                                                    .height(30.dp)
+                                            ) {
+                                                Image(
+                                                    painter = painterResource(R.drawable.retangulo),
+                                                    contentDescription = "Imagem",
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .fillMaxHeight(1f)
+                                                )
+                                                Text(
+                                                    text = "${it.pontos} pontos",
+                                                    modifier = Modifier
+                                                        .align(Alignment.Center),
+                                                    color = Color.White,
+                                                    fontSize = 18.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
 
-                                        Spacer(modifier = Modifier.padding(5.dp))
+                                            Spacer(modifier = Modifier.padding(5.dp))
 
-                                        Row(modifier = Modifier.padding(top = 13.dp))
-                                        {
+//                                            Row(modifier = Modifier.padding(top = 6.dp))
+//                                            {
                                             Button(
                                                 onClick = {
                                                     selectedCupom = it
@@ -490,20 +580,23 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
 
 
                                                 }, modifier = Modifier
-                                                    .width(92.dp)
-                                                    .height(32.dp),
-                                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+                                                    .fillMaxWidth(0.8f)
+                                                    .height(35.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                    backgroundColor = Color.White
+                                                )
                                             )
                                             {
-                                                Text(text = "PEGUE", color = Color(8, 113, 19))
+                                                Text(
+                                                    text = "PEGUE",
+                                                    color = Color(8, 113, 19)
+                                                )
 
                                             }
+//                                            }
                                         }
-
                                     }
-
                                 }
-
                             }
 
                             Box(
@@ -533,155 +626,173 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authT
                 }
 
                 "resgatados" -> {
+                    if (reedem[0].id == 0) {
 
-                    reedem.forEach{
-                        // Primeiro Card
-                        Box(
+                        Column(
                             modifier = Modifier
-                                .height(130.dp)
-                                .fillMaxWidth()
-                        )
-                        {
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = CenterHorizontally
+                        ) {
 
-                            Card(
-                                modifier = Modifier
-                                    .width(400.dp)
-                                    .height(130.dp)
-                                    .padding(start = 25.dp, end = 25.dp, top = 15.dp),
-                                shape = RoundedCornerShape(15.dp),
-                                backgroundColor = Color(181, 116, 48)
-                            )
-                            {
-
-
-                                Row(
-                                    modifier = Modifier.padding(bottom = 25.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Image(
-                                        painter = painterResource(R.drawable.logo_sem_fundo),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(120.dp)
-                                            .padding(start = 10.dp)
-
-                                    )
-
-                                }
-
-                                Column(
-                                    modifier = Modifier.padding(start = 80.dp, top = 15.dp),
-                                    horizontalAlignment = CenterHorizontally
+                            Text(
+                                text = stringResource(id = R.string.not_found_reedemed),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                textDecoration = TextDecoration.Underline,
+                                color = colorResource(
+                                    id = R.color.dark_green
                                 )
-                                {
-
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(0.8f),
-                                        textAlign = TextAlign.Justify,
-                                        text = it.nome,
-                                        fontSize = 16.sp,
-                                        color = Color.White
-                                    )
-
-
-                                    Row() {
-
-                                        Box(
-                                            modifier = Modifier
-                                                .width(95.dp)
-                                                .height(80.dp)
-                                        ) {
-                                            Image(
-                                                painter = painterResource(R.drawable.retangulo),
-                                                contentDescription = "Imagem",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(80.dp)
-                                            )
-                                            Text(
-                                                text = "${it.pontos} pontos",
-                                                modifier = Modifier
-                                                    .align(Alignment.Center),
-                                                color = Color.White,
-                                                fontSize = 14.sp
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.padding(5.dp))
-
-                                        Row(modifier = Modifier.padding(top = 13.dp))
-                                        {
-                                            Button(
-                                                onClick = {
-
-                                                    orderApi.getCouponById(it.id).enqueue(object : Callback<Coupon> {
-                                                        override fun onResponse(
-                                                            call: Call<Coupon>,
-                                                            response: Response<Coupon>
-                                                        ) {
-                                                            if (response.isSuccessful){
-                                                                selectedCupom = it
-                                                                showCoupon = true
-                                                            }
-                                                        }
-
-                                                        override fun onFailure(
-                                                            call: Call<Coupon>,
-                                                            t: Throwable
-                                                        ) {
-                                                            Log.i("fail", t.message.toString())
-                                                        }
-
-                                                    })
-
-                                                }, modifier = Modifier
-                                                    .width(92.dp)
-                                                    .height(32.dp),
-                                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
-                                            )
-                                            {
-                                                Text(text = "VEJA", color = Color(181, 116, 48))
-
-                                            }
-
-
-                                        }
-
-
-                                    }
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(top = 10.dp)
-                                    .size(40.dp)
-                                    .align(Alignment.CenterStart)
-                                    .offset(x = (-1).dp)
-                                    .background(Color.White, shape = CircleShape)
-                            ) {
-
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .padding(top = 10.dp)
-                                    .size(40.dp)
-                                    .align(Alignment.CenterEnd)
-                                    .offset(x = (2).dp)
-                                    .background(Color.White, shape = CircleShape)
                             )
                         }
+
+                    } else {
+
+                        reedem.forEach {
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight(0.3f)
+                                    .fillMaxWidth()
+                            ) {
+
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(start = 16.dp, end = 16.dp, top = 15.dp),
+                                    shape = RoundedCornerShape(15.dp),
+                                    backgroundColor = Color(181, 116, 48)
+
+                                ) {
+
+                                    Column(modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(4.dp)) {
+
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            text = it.nome,
+                                            fontSize = 20.sp,
+                                            color = Color.White
+                                        )
+
+                                        Row(
+                                            modifier = Modifier
+                                                .padding(bottom = 10.dp)
+                                                .fillMaxWidth()
+                                                .fillMaxHeight(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Image(
+                                                painter = painterResource(R.drawable.logo_sem_fundo),
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .width(160.dp)
+                                                    .height(120.dp)
+                                            )
+
+                                            Column(
+                                                modifier = Modifier
+                                                    .padding(top = 15.dp, end = 36.dp)
+                                                    .fillMaxWidth(),
+                                                horizontalAlignment = CenterHorizontally
+                                            ) {
+
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .height(30.dp)
+                                                ) {
+                                                    Image(
+                                                        painter = painterResource(R.drawable.retangulo),
+                                                        contentDescription = "Imagem",
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .fillMaxHeight(1f)
+                                                    )
+                                                    Text(
+                                                        text = "${it.pontos} pontos",
+                                                        modifier = Modifier
+                                                            .align(Alignment.Center),
+                                                        color = Color.White,
+                                                        fontSize = 18.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                }
+
+                                                Spacer(modifier = Modifier.padding(5.dp))
+
+//                                            Row(modifier = Modifier.padding(top = 6.dp))
+//                                            {
+                                                Button(
+                                                    onClick = {
+
+                                                        orderApi.getCouponById(it.id).enqueue(object : Callback<Coupon> {
+                                                            override fun onResponse(
+                                                                call: Call<Coupon>,
+                                                                response: Response<Coupon>
+                                                            ) {
+                                                                if (response.isSuccessful){
+                                                                    selectedCupom = it
+                                                                    showCoupon = true
+                                                                }
+                                                            }
+
+                                                            override fun onFailure(
+                                                                call: Call<Coupon>,
+                                                                t: Throwable
+                                                            ) {
+                                                                Log.i("fail", t.message.toString())
+                                                            }
+
+                                                        })
+
+                                                    }, modifier = Modifier
+                                                        .width(92.dp)
+                                                        .height(32.dp),
+                                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+                                                )
+                                                {
+                                                    Text(text = "VEJA", color = Color(181, 116, 48))
+
+                                                }
+//                                            }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .padding(top = 10.dp)
+                                        .size(40.dp)
+                                        .align(Alignment.CenterStart)
+                                        .offset(x = (-1).dp)
+                                        .background(Color.White, shape = CircleShape)
+                                ) {
+
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .padding(top = 10.dp)
+                                        .size(40.dp)
+                                        .align(Alignment.CenterEnd)
+                                        .offset(x = (2).dp)
+                                        .background(Color.White, shape = CircleShape)
+                                )
+
+
+                            }
+
+                        }
                     }
-
-
                 }
-
-
             }
         }
-
     }
-
 }
+
 
 

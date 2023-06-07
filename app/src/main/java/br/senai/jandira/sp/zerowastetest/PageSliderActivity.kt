@@ -19,7 +19,7 @@ class PageSliderActivity : ComponentActivity() {
             ZeroWasteTestTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting()
+                    TelaCuponsContent()
                 }
             }
         }
@@ -28,7 +28,7 @@ class PageSliderActivity : ComponentActivity() {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Greeting() {
+fun TelaCuponsContent() {
     ViewPagerSlider(LocalContext.current)
 }
 
@@ -36,6 +36,6 @@ fun Greeting() {
 @Composable
 fun DefaultPreview5() {
     ZeroWasteTestTheme {
-        Greeting()
+        TelaCuponsContent()
     }
 }
