@@ -13,22 +13,20 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -40,12 +38,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import br.senai.jandira.sp.zerowastetest.api.ApiCalls
 import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
 import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.*
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelMaterial.MaterialCatador
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelMaterial.Materials
-import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelPedido.MaterialMessage
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.*
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.MateriaisCatador
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
@@ -94,6 +93,17 @@ fun ProfileContent() {
         }
     )
 
+    var expanded1 by remember {
+        mutableStateOf(false)
+    }
+
+    val icon1 = if (expanded1) {
+        Icons.Filled.KeyboardArrowUp
+
+    } else {
+        Icons.Filled.KeyboardArrowDown
+    }
+
     var dadosUsuario by remember {
         mutableStateOf(UserData())
     }
@@ -122,6 +132,10 @@ fun ProfileContent() {
     var cpfState by remember {
         mutableStateOf("")
     }
+    var textFieldSize by remember {
+        mutableStateOf(Size.Zero)
+    }
+
 
     apiCalls.getUserData(authToken).enqueue(object : Callback<UserData> {
 
@@ -160,19 +174,20 @@ fun ProfileContent() {
     })
 
     val materialsList = mutableListOf<Materials>()
+    Log.i("teste", dadosUsuario.catador?.get(0)?.id.toString())
 
-    apiCalls.getMateriaisList().enqueue(object : Callback<MaterialMessage> {
-        override fun onResponse(call: Call<MaterialMessage>, response: Response<MaterialMessage>) {
+    apiCalls.getMateriaisNotCollected(id = dadosUsuario.catador?.get(0)?.id).enqueue(object : Callback<List<Materials>> {
+        override fun onResponse(call: Call<List<Materials>>, response: Response<List<Materials>>) {
 
-            for (i in response.body()!!.message) {
+            for (i in response.body()!!) {
 
-//                materialsList.add()
+                materialsList.add(i)
 
             }
 
         }
 
-        override fun onFailure(call: Call<MaterialMessage>, t: Throwable) {
+        override fun onFailure(call: Call<List<Materials>>, t: Throwable) {
             Log.e("fail_getMaterials", t.message.toString())
         }
 
@@ -185,6 +200,12 @@ fun ProfileContent() {
 
     var attRequest by remember {
         mutableStateOf(AttRequest())
+    }
+
+
+
+    var selectedMaterial by remember {
+        mutableStateOf(Materials(id = 0, nome = ""))
     }
 
 
@@ -221,10 +242,6 @@ fun ProfileContent() {
         mutableStateOf(false)
     }
 
-    var showListAdresses by remember {
-        mutableStateOf(false)
-    }
-
     var adressesErr by remember {
         mutableStateOf(false)
     }
@@ -232,6 +249,97 @@ fun ProfileContent() {
     var materialsErr by remember {
         mutableStateOf(false)
     }
+    var showModal by remember { mutableStateOf(false) }
+    var showDrop by remember { mutableStateOf(false) }
+
+    if (showModal) {
+        AlertDialog(
+            onDismissRequest = { showModal = false },
+            title = { Text(text = "Cadastro de materiais") },
+            text = {
+                Column {
+                    selectedMaterial.nome?.let {
+                        OutlinedTextField(
+                            value = it,
+                            onValueChange = {
+                                Log.i("teste", selectedMaterial.toString())
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onGloballyPositioned { coordinates ->
+                                    textFieldSize = coordinates.size.toSize()
+                                },
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color(
+                                    188,
+                                    219,
+                                    183
+                                )
+                            ),
+                            //                shape = RoundedCornerShape(16.dp),
+                            label = { Text(text = "Selecione uma opção") },
+
+                            trailingIcon = {
+                                Icon(icon1, "", Modifier.clickable { showDrop = !showDrop })
+                            }
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = showDrop,
+                        onDismissRequest = { showDrop = false }
+                    ) {
+                        materialsList.map { label ->
+                            DropdownMenuItem(onClick = { label.nome?.let {  selectedMaterial= Materials(nome = it, id = label.id) } }) {
+                                label.nome?.let { Text(text = it) }
+                            }
+                        }
+                    }
+                }
+            },
+            
+            confirmButton = {
+                
+                Button(onClick = {
+                    val material = MaterialCatador(id_catador = dadosUsuario.catador!![0].id, id_materiais = listOf(selectedMaterial.id))
+                    apiCalls.storeMaterial(authToken, material)
+                        .enqueue(object : Callback<List<MaterialCatador>> {
+                            override fun onResponse(
+                                call: Call<List<MaterialCatador>>,
+                                response: Response<List<MaterialCatador>>
+
+                            ) {
+                                showModal = false
+                                if (!response.isSuccessful){
+                                    Toast.makeText(context, "${response.code()}", Toast.LENGTH_LONG).show()
+                                }
+                            }
+
+                            override fun onFailure(
+                                call: Call<List<MaterialCatador>>,
+                                t: Throwable
+                            ) {
+                                Log.i("fail", t.message.toString())
+                            }
+
+                        })
+                    Toast.makeText(context, "Cadastrado com sucesso", Toast.LENGTH_LONG).show()
+                },
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.light_green))) {
+                    Text(text = "Confirmar")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showModal = false },
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_green))) {
+                    Text(text = "Cancelar")
+                }
+            }
+        )
+    }
+
+
+
 
     Column(
         modifier = Modifier
@@ -330,6 +438,8 @@ fun ProfileContent() {
                         color = Color.White
                     )
                 }
+
+
                 Text(
                     text = userType,
                     color = Color.White,
@@ -433,7 +543,7 @@ fun ProfileContent() {
                             contentDescription = "Adicionar Material",
                             modifier = Modifier
                                 .clickable {
-
+                                    showModal = true
                                     showListMateriais = true
 
                                 }
@@ -487,6 +597,8 @@ fun ProfileContent() {
                                                             "Material Deletado",
                                                             Toast.LENGTH_SHORT
                                                         ).show()
+
+                                                        materiaisCatador.drop(i)
 
                                                     } else {
 
@@ -802,17 +914,6 @@ fun ProfileContent() {
         }
     }
 
-    AnimatedVisibility(
-        visible = showListMateriais,
-        enter = scaleIn() + expandVertically(expandFrom = Alignment.CenterVertically),
-        exit = scaleOut(animationSpec = tween(1)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
-    ) {
-
-        LazyColumn {
-            item { materialsList }
-        }
-
-    }
 
     AnimatedVisibility(
         visible = confirmationVisibility,
