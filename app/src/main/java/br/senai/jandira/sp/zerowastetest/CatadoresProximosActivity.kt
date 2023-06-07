@@ -3,6 +3,7 @@ package br.senai.jandira.sp.zerowastetest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Display
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -179,46 +180,50 @@ fun CatadoresProximosContent(enderecoUsuario: List<UserAddress>, authToken: Stri
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Image(painter = painterResource(id = R.drawable.back_arrow),
-            contentDescription = "Voltar para catadores próximos",
-            modifier = Modifier
-                .size(50.dp)
-                .clickable {
-                    val intent = Intent(context, HomeActivity::class.java)
-                    context.startActivity(intent)
-                }
-                .padding(8.dp)
-        )
-        Box() {
-            TextField(
-                value = searchText,
-                onValueChange = { searchText = it },
+        Row (verticalAlignment = Alignment.CenterVertically){
+
+            Image(painter = painterResource(id = R.drawable.back_arrow),
+                contentDescription = "Voltar para catadores próximos",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, end = 16.dp, start = 16.dp, bottom = 8.dp)
-                    .background(Black)
-                    .clip(RoundedCornerShape(8.dp)),
-                placeholder = {
-                    Text(
-                        "Pesquisar por catador ou material...",
-                        style = MaterialTheme.typography.body1.copy(color = White)
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        Icons.Filled.Search,
-                        contentDescription = "Ícone de pesquisa",
-                        tint = White
-                    )
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = White,
-                    cursorColor = White,
-                    placeholderColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
+                    .size(50.dp)
+                    .clickable {
+                        val intent = Intent(context, HomeActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                    .padding(8.dp)
             )
+            Box {
+                TextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, end = 16.dp, start = 16.dp, bottom = 8.dp)
+                        .background(Black)
+                        .clip(RoundedCornerShape(8.dp)),
+                    placeholder = {
+                        Text(
+                            "Pesquisar por catador/material...",
+                            style = MaterialTheme.typography.body1.copy(color = White)
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = "Ícone de pesquisa",
+                            tint = White
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = White,
+                        cursorColor = White,
+                        placeholderColor = Color.LightGray,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
+            }
+
         }
 
         Column(
@@ -334,14 +339,20 @@ fun CatadoresProximosContent(enderecoUsuario: List<UserAddress>, authToken: Stri
                                     .fillMaxWidth()
                                     .padding(8.dp)
                             ) {
-                                Image(
-                                    painter = painterResource(R.drawable.baseline_person_24),
-                                    contentDescription = "${catador.nome}",
-                                    modifier = Modifier
-                                        .size(80.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
+                                DisplayImageFromUrl(
+                                    imageUrl = catador.foto,
+                                    description = "Foto ${catador.nome}",
+                                    size = 80.dp,
+                                    padding = 0.dp
                                 )
+//                                Image(
+//                                    painter = painterResource(R.drawable.baseline_person_24),
+//                                    contentDescription = "${catador.nome}",
+//                                    modifier = Modifier
+//                                        .size(80.dp)
+//                                        .clip(CircleShape),
+//                                    contentScale = ContentScale.Crop
+//                                )
 
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {

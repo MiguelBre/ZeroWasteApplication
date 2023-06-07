@@ -59,6 +59,7 @@ import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelRating.Media
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelRating.Rating
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.Favoritar
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserAddress
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
 import com.google.gson.Gson
@@ -72,31 +73,54 @@ class Profile : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            ZeroWasteTestTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(8, 113, 19),
-                ) {
-                    OthersProfileContent()
+        val api = RetrofitApi.getMainApi()
+        val mainApi = api.create(ApiCalls::class.java)
+
+        val sessionManager = SessionManager(this)
+        val authToken = "Bearer " + sessionManager.fetchAuthToken()
+
+        mainApi.getUserData(authToken).enqueue(object : Callback<UserData>{
+            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+                if (response.isSuccessful){
+
+                    setContent {
+                        ZeroWasteTestTheme {
+                            // A surface container using the 'background' color from the theme
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                color = Color(8, 113, 19),
+                            ) {
+                                OthersProfileContent(response.body()!!.gerador!![0].id)
+                            }
+                        }
+
+
+                    }
+
+                } else {
+                    Log.e("response_UserData", response.toString())
                 }
             }
 
+            override fun onFailure(call: Call<UserData>, t: Throwable) {
+                Log.e("Err_getUserData", t.message.toString())
+            }
 
-        }
+        })
+
+
     }
 }
 
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun OthersProfileContent() {
+fun OthersProfileContent(idGerador: Int) {
     val context = LocalContext.current
     val intent = (context as Profile).intent
 
     val sessionManager = SessionManager(context)
-    val authToken = sessionManager.fetchAuthToken()
+    val authToken = "Bearer " + sessionManager.fetchAuthToken()
 
     val stringUser = intent.getStringExtra("user")
     val user = Gson().fromJson(stringUser, UserData::class.java)
@@ -135,13 +159,13 @@ fun OthersProfileContent() {
     if (isDialogShown) {
         CustomDialogOthersProfile(onDismiss = { isDialogShown = false }, onConfirm = {
             user.catador?.get(0)?.id?.let { it1 ->
-                logisticApi.checkRate(authToken, it1.toInt())
+                logisticApi.checkRate(authToken, it1)
                     .enqueue(object : Callback<Rating> {
                         override fun onResponse(call: Call<Rating>, response: Response<Rating>) {
                             if (response.code() != 200) {
                                 logisticApi.rate(
                                     Rating(
-                                        id_gerador = 1,
+                                        id_gerador = idGerador,
                                         id_catador = user.catador!![0].id,
                                         nota = it.toInt()
                                     ), authToken
@@ -155,7 +179,7 @@ fun OthersProfileContent() {
                                                 context,
                                                 "Nota cadastrada com sucesso",
                                                 Toast.LENGTH_LONG
-                                            )
+                                            ).show()
                                         }
 
                                         override fun onFailure(call: Call<Rating>, t: Throwable) {
@@ -166,7 +190,7 @@ fun OthersProfileContent() {
                             } else {
                                 logisticApi.updateRate(
                                     Rating(
-                                        id_gerador = 1,
+                                        id_gerador = idGerador,
                                         id_catador = user.catador!![0].id,
                                         nota = it.roundToInt()
                                     ), authToken
@@ -181,7 +205,7 @@ fun OthersProfileContent() {
                                                     context,
                                                     "Nota cadastrada com sucesso",
                                                     Toast.LENGTH_LONG
-                                                )
+                                                ).show()
                                                 isDialogShown = false
 
                                             }
@@ -202,7 +226,6 @@ fun OthersProfileContent() {
 
                     })
             }
-
         })
     }
 
@@ -298,10 +321,11 @@ fun OthersProfileContent() {
 
                                 Button(
                                     onClick = {
+                                        Log.i("Token", authToken)
                                         mainApi.favoritar(
                                             Favoritar(
                                                 id_catador = user.catador?.get(0)?.id!!.toInt(),
-                                                id_gerador = 1
+                                                id_gerador = idGerador
                                             ),
                                             authToken
                                         )
@@ -315,7 +339,7 @@ fun OthersProfileContent() {
                                                         isFavorited =
                                                             if (response.code() == 201) "Favoritado" else "Favoritar"
                                                     } else {
-                                                        Log.i("teste", response.code().toString())
+                                                        Log.e("teste", response.toString())
                                                     }
                                                 }
 
@@ -340,26 +364,6 @@ fun OthersProfileContent() {
                                 }
 
                                 CopyLinkButton(contact = user.telefone)
-
-//                            OutlinedButton(
-//                                onClick = { /*TODO*/ },
-//                                modifier = Modifier
-//                                    .fillMaxWidth(0.6f)
-//                                    .padding(end = 10.dp, start = 5.dp),
-//                                border = BorderStroke(1.dp, colorResource(id = R.color.dark_green))
-//                            ) {
-//                                Row(horizontalArrangement = Arrangement.SpaceAround) {
-//                                    Image(
-//                                        painter = painterResource(id = R.drawable.whatsapp_icon),
-//                                        contentDescription = "Contato",
-//                                        modifier = Modifier.size(15.dp)
-//                                    )
-//                                    Text(
-//                                        text = "Contato",
-//                                        color = Color.Black,
-//                                        modifier = Modifier.padding(start = 10.dp)
-//                                    )
-//                        }
 
                             }
                         }
@@ -519,8 +523,6 @@ fun OthersProfileContent() {
                         AnimatedVisibility(
                             visible = materialsClick,
                             enter = slideInVertically(
-                                // Start the slide from 40 (pixels) above where the content is supposed to go, to
-                                // produce a parallax effect
                                 initialOffsetY = { -40 }
                             ) + expandVertically(
                                 expandFrom = Alignment.Top
@@ -636,11 +638,11 @@ fun OthersProfileContent() {
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(text = stringResource(id = R.string.corridas_finalizadas))
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "300", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
+                    Text(text = "10", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(text = stringResource(id = R.string.favoritos_text))
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "13", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
+                    Text(text = "6", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
                     Spacer(modifier = Modifier.height(8.dp))
 
                 }

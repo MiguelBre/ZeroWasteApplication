@@ -317,7 +317,7 @@ fun ProfileActivityBody() {
                             if (enderecosCadastrados!!.size == 1)
                                 Spacer(modifier = Modifier.height(45.dp))
                             else if (enderecosCadastrados!!.size == 2)
-                                Spacer(modifier = Modifier.height(35.dp))
+                                Spacer(modifier = Modifier.height(70.dp))
                             else
                                 Spacer(modifier = Modifier.height(90.dp))
 
@@ -508,66 +508,67 @@ fun ProfileActivityBody() {
                 )
             }
 
-            Card(
-                modifier = Modifier.padding(start = 30.dp, end = 30.dp, bottom = 20.dp),
-                border = BorderStroke(2.dp, colorResource(id = R.color.light_green)),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            if(userType == "Catador"){
+                Card(
+                    modifier = Modifier.padding(start = 30.dp, end = 30.dp, bottom = 20.dp),
+                    border = BorderStroke(2.dp, colorResource(id = R.color.light_green)),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        horizontalArrangement = Arrangement.Center
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.star_filled_icon),
-                            contentDescription = "Estrelas de Avaliação",
-                            modifier = Modifier.size(40.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.star_filled_icon),
+                                contentDescription = "Estrelas de Avaliação",
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.star_filled_icon),
+                                contentDescription = "Estrelas de Avaliação",
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.star_filled_icon),
+                                contentDescription = "Estrelas de Avaliação",
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.star_filled_icon),
+                                contentDescription = "Estrelas de Avaliação",
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.star_filled_icon),
+                                contentDescription = "Estrelas de Avaliação",
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        Text(text = "5.0", fontSize = 80.sp)
+                        Divider(
+                            modifier = Modifier.fillMaxWidth(0.7f),
+                            color = colorResource(id = R.color.light_green),
+                            thickness = 1.dp
                         )
-                        Image(
-                            painter = painterResource(R.drawable.star_filled_icon),
-                            contentDescription = "Estrelas de Avaliação",
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Image(
-                            painter = painterResource(R.drawable.star_filled_icon),
-                            contentDescription = "Estrelas de Avaliação",
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Image(
-                            painter = painterResource(R.drawable.star_filled_icon),
-                            contentDescription = "Estrelas de Avaliação",
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Image(
-                            painter = painterResource(R.drawable.star_filled_icon),
-                            contentDescription = "Estrelas de Avaliação",
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                    Text(text = "5.0", fontSize = 80.sp)
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        color = colorResource(id = R.color.light_green),
-                        thickness = 1.dp
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(text = stringResource(id = R.string.corridas_finalizadas))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "300", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(text = stringResource(id = R.string.favoritos_text))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "13", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(text = stringResource(id = R.string.corridas_finalizadas))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "11", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(text = stringResource(id = R.string.favoritos_text))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "7", fontWeight = FontWeight.SemiBold, fontSize = 40.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
 
+                    }
                 }
             }
-
         }
     }
 
@@ -618,13 +619,6 @@ fun ProfileActivityBody() {
                             padding = 4.dp
                         )
 
-//                        Image(
-//                            painter = painterResource(id = R.drawable.avatar_standard_icon),
-//                            contentDescription = "Foto do Perfil",
-//                            modifier = Modifier
-//                                .size(60.dp)
-//                                .padding(4.dp)
-//                        )
                         Column(
                             modifier = Modifier.padding(start = 4.dp),
                             verticalArrangement = Arrangement.Center
@@ -848,7 +842,8 @@ fun ProfileActivityBody() {
                         .height(55.dp)
                         .padding(start = 8.dp, end = 20.dp)
                         .clickable {
-                            /*TODO*/
+                            val intent = Intent(context, CatadoresFavoritosActivity::class.java)
+                            context.startActivity(intent)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {

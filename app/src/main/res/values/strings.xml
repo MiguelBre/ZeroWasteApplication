@@ -84,6 +84,8 @@
     <string name="text_coupon">Ganhe pontos para trocar com recompensas exclusivas com nossos parceiros,
         acumule pontos fazendo  reciclagem ou coletando reciclagem</string>
     <string name="not_found_reedemed">Nenhum cupom resgatado</string>
+    <string name="not_found_favorited">Nenhum Catador Favoritado!</string>
+    <string name="todo_favorited">Favorite catadores para que apareçam aqui.</string>
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
