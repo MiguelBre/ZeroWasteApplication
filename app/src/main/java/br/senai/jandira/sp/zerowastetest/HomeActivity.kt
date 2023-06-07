@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import br.senai.jandira.sp.zerowastetest.api.ApiCalls
-import br.senai.jandira.sp.zerowastetest.api.LogisticCalls
 import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
 import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
@@ -68,9 +67,6 @@ class HomeActivity : ComponentActivity() {
         val socketHandler = SocketHandler()
         socketHandler.setSocket(cleanToken)
         socketHandler.establishConnection()
-
-        val retrofitApi = RetrofitApi.getLogisticApi()
-        val orderApi = retrofitApi.create(LogisticCalls::class.java)
 
         fun fetchLocation(): CompletableFuture<Geometry> {
             val completableFuture = CompletableFuture<Geometry>()
@@ -574,7 +570,8 @@ fun HomeContent() {
                         .height(55.dp)
                         .padding(start = 8.dp, end = 20.dp)
                         .clickable {
-                            /*TODO*/
+                            val intent = Intent(context, CatadoresFavoritosActivity::class.java)
+                            context.startActivity(intent)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {

@@ -1,10 +1,12 @@
 package br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador
 
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
 data class Catador(
 
     var id: Int = 0,
-    var id_usuario:String = "",
-    var materiais_catador: List<MateriaisCatador>? = null
+    var id_usuario: Int = 0,
+    var materiais_catador: List<MateriaisCatador>? = null,
+    val user: UserData?
 
 )
 

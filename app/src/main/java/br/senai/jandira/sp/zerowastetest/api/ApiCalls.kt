@@ -72,4 +72,7 @@ interface ApiCalls {
     @POST("materiais/catador")
     fun storeMaterial(@Header("Authorization") token: String, @Body newMaterialCatador: MaterialCatador): Call<List<MaterialCatador>>
 
+    @GET("/favoritar/{id}")
+    fun getFavoritos(@Path("id") id: Int, @Header("Authorization") token: String): Call<List<Favoritos>>
+
 }
