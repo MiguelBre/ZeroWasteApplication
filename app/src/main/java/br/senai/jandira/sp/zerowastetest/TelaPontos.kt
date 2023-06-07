@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Box
 import br.senai.jandira.sp.zerowastetest.api.LogisticCalls
 import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
+import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Coupon
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Pontos
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
@@ -55,6 +56,10 @@ class TelaPontos : ComponentActivity() {
         val retrofitApi = RetrofitApi.getLogisticApi()
         val orderApi = retrofitApi.create(LogisticCalls::class.java)
 
+        val sessionManager = SessionManager(this)
+        val cleanToken = sessionManager.fetchAuthToken()
+        val authToken = "Bearer $cleanToken"
+
         var pontos: Pontos
 
         var unreedem: List<Coupon>
@@ -65,16 +70,17 @@ class TelaPontos : ComponentActivity() {
 
 
 
-        orderApi.getUnreedemCoupons("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsInVzZXJfdHlwZSI6IkdFUkFET1IiLCJpZF91c3VhcmlvIjoxMywiaWRfbW9kbyI6NCwiaWF0IjoxNjg2MDQ4NTk0LCJleHAiOjE2ODYxMzQ5OTR9.gHtnt7IXkrS991vMHRHhNuiB-w6VuBYS6RGcDxxRnOo")
+        orderApi.getUnreedemCoupons(authToken)
             .enqueue(object : Callback<List<Coupon>> {
                 override fun onResponse(
                     call: Call<List<Coupon>>,
                     response: Response<List<Coupon>>
                 ) {
                     if (response.isSuccessful) {
+                        Log.i("authToken", authToken)
                         unreedem = response.body()!!
 
-                        orderApi.getReedemCoupons("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsInVzZXJfdHlwZSI6IkdFUkFET1IiLCJpZF91c3VhcmlvIjoxMywiaWRfbW9kbyI6NCwiaWF0IjoxNjg2MDQ4NTk0LCJleHAiOjE2ODYxMzQ5OTR9.gHtnt7IXkrS991vMHRHhNuiB-w6VuBYS6RGcDxxRnOo")
+                        orderApi.getReedemCoupons(authToken)
                             .enqueue(object : Callback<List<Coupon>> {
                                 override fun onResponse(
                                     call: Call<List<Coupon>>,
@@ -83,7 +89,7 @@ class TelaPontos : ComponentActivity() {
                                     if (responseReedem.isSuccessful) {
                                         reedem = responseReedem.body()!!
 
-                                        orderApi.getPontos("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsInVzZXJfdHlwZSI6IkdFUkFET1IiLCJpZF91c3VhcmlvIjoxMywiaWRfbW9kbyI6NCwiaWF0IjoxNjg2MDQ4NTk0LCJleHAiOjE2ODYxMzQ5OTR9.gHtnt7IXkrS991vMHRHhNuiB-w6VuBYS6RGcDxxRnOo")
+                                        orderApi.getPontos(authToken)
                                             .enqueue(object : Callback<Pontos> {
                                                 override fun onResponse(call: Call<Pontos>, responsePonto: Response<Pontos>) {
                                                     if (responsePonto.isSuccessful) {
@@ -96,13 +102,13 @@ class TelaPontos : ComponentActivity() {
                                                                     modifier = Modifier.fillMaxSize(),
                                                                     color = Color(255, 255, 255)
                                                                 ) {
-                                                                    Greeting(pontos, unreedem, reedem)
+                                                                    Greeting(pontos, unreedem, reedem, authToken)
                                                                 }
                                                             }
                                                         }
 
                                                     } else {
-                                                        Log.e("Err_getPontos", response.toString())
+                                                        Log.e("Err_getPontos", responsePonto.toString())
                                                     }
 
                                                 }
@@ -112,7 +118,7 @@ class TelaPontos : ComponentActivity() {
                                                 }
                                             })
                                     } else {
-                                        Log.e("Err_getRedeemCoupon", response.toString())
+                                        Log.e("Err_getRedeemCoupon", responseReedem.toString())
                                     }
                                 }
 
@@ -176,7 +182,7 @@ fun RoundedTextField(
 
 
 @Composable
-fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
+fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>, authToken: String) {
 
     val retrofitApi = RetrofitApi.getLogisticApi()
     val orderApi = retrofitApi.create(LogisticCalls::class.java)
@@ -221,7 +227,7 @@ fun Greeting(pontos: Pontos, unreedem: List<Coupon>, reedem: List<Coupon>) {
 
     if (showAlert){
         Dialogs(onDismiss = { showAlert = false }, onConfirm = {
-            orderApi.reedemCoupon("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsInVzZXJfdHlwZSI6IkdFUkFET1IiLCJpZF91c3VhcmlvIjoxMywiaWRfbW9kbyI6NCwiaWF0IjoxNjg2MDQ4NTk0LCJleHAiOjE2ODYxMzQ5OTR9.gHtnt7IXkrS991vMHRHhNuiB-w6VuBYS6RGcDxxRnOo", it)
+            orderApi.reedemCoupon(authToken, it)
                 .enqueue(object : Callback<Coupon> {
                     override fun onResponse(
                         call: Call<Coupon>,

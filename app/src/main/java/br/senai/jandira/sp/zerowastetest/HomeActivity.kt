@@ -64,8 +64,6 @@ class HomeActivity : ComponentActivity() {
 
         val sessionManager = SessionManager(this)
         val cleanToken = sessionManager.fetchAuthToken()
-//        val gerador: Int = sessionManager.getUserIdType()
-//        Log.i("testando_gerador", gerador.toString())
 
         val socketHandler = SocketHandler()
         socketHandler.setSocket(cleanToken)
@@ -552,7 +550,8 @@ fun HomeContent() {
                         .height(55.dp)
                         .padding(start = 8.dp, end = 20.dp)
                         .clickable {
-                            /*TODO*/
+                            val toCouponActivity = Intent(context, TelaPontos::class.java)
+                            context.startActivity(toCouponActivity)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
