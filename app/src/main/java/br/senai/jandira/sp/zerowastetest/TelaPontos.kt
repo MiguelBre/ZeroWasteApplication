@@ -42,7 +42,6 @@ import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupo
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelCupons.Pontos
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
 import com.example.telacupons.CupomActivity
-import com.example.telacupons.Dialogs
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback

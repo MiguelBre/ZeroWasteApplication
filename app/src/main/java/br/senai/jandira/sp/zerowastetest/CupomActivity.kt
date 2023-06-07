@@ -51,18 +51,13 @@ class CupomActivity : ComponentActivity() {
 @Composable
 fun TelaCupom() {
 
-    var context = LocalContext.current
+    val context = LocalContext.current
     val intent = (context as CupomActivity).intent
 
     val couponString = intent.getStringExtra("coupon")
 
 
     val coupon = Gson().fromJson(couponString, Coupon::class.java)
-
-
-
-
-
 
     Column(
         modifier = Modifier.padding(top = 10.dp),

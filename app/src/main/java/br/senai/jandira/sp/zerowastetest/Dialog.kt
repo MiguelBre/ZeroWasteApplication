@@ -1,9 +1,6 @@
-package com.example.telacupons
+package br.senai.jandira.sp.zerowastetest
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,8 +35,6 @@ fun Dialogs(
                 usePlatformDefaultWidth = false
                 )
     ) {
-
-
 
         Card(
             modifier = Modifier
