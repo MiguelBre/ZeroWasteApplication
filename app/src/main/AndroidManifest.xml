@@ -18,6 +18,16 @@
         android:theme="@style/Theme.ZeroWasteTest"
         tools:targetApi="31">
         <activity
+            android:name=".ChatMessages"
+            android:exported="false"
+            android:label="@string/title_activity_chat_messages"
+            android:theme="@style/Theme.ZeroWasteTest" />
+        <activity
+            android:name=".Chat"
+            android:exported="false"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/Theme.ZeroWasteTest" />
+        <activity
             android:name=".CatadoresFavoritosActivity"
             android:exported="false"
             android:label="@string/title_activity_aceitar_coleta"

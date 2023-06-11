@@ -593,6 +593,32 @@ fun HomeContent() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp)
+                        .padding(start = 8.dp, end = 20.dp)
+                        .clickable {
+                            val toChat =
+                                Intent(context, Chat::class.java)
+                            context.startActivity(toChat)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Image(
+                        painter = painterResource(id = R.drawable.chat_icon),
+                        contentDescription = "Chat",
+                        modifier = Modifier
+                            .size(55.dp)
+                            .padding(start = 12.dp, end = 4.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.chat),
+                        modifier = Modifier.padding(start = 4.dp, end = 20.dp),
+                        fontSize = 18.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
                         .padding(start = 10.dp, end = 20.dp)
                         .clickable {
                             sessionManager.eraseAuthToken()

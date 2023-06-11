@@ -605,7 +605,7 @@ fun ProfileActivityBody() {
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
                         .clickable {
-                            menuVisibility = !menuVisibility
+                            menuVisibility != menuVisibility
                         },
                     shape = RoundedCornerShape(10.dp),
                     backgroundColor = colorResource(id = R.color.dark_green)
@@ -718,7 +718,8 @@ fun ProfileActivityBody() {
                                 .clickable {
                                     requestPickupClick = !requestPickupClick
 
-                                    val toSolicitarColetaActivity = Intent(context, SolicitarColetaActivity::class.java)
+                                    val toSolicitarColetaActivity =
+                                        Intent(context, SolicitarColetaActivity::class.java)
                                     context.startActivity(toSolicitarColetaActivity)
                                 }) {
                                 Text(
@@ -733,9 +734,11 @@ fun ProfileActivityBody() {
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp)
                                 .clickable {
+
                                     requestPickupClick = !requestPickupClick
 
-                                    val toAceitarColetaActivity = Intent(context, AceitarColetaActivity::class.java)
+                                    val toAceitarColetaActivity =
+                                        Intent(context, AceitarColetaActivity::class.java)
                                     context.startActivity(toAceitarColetaActivity)
 
                                 }) {
@@ -763,7 +766,6 @@ fun ProfileActivityBody() {
                                     getClick = registerLocationClick
                                 )
                             )
-
                         }
                         if (userType == "Gerador") {
                             Row(
@@ -784,6 +786,7 @@ fun ProfileActivityBody() {
                                 )
                             }
                         }
+
                     }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
@@ -800,37 +803,13 @@ fun ProfileActivityBody() {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.prize_icon),
-                        contentDescription = "Tela de pontos e cupons",
+                        contentDescription = "Página inicial",
                         modifier = Modifier
                             .size(55.dp)
                             .padding(start = 12.dp, end = 4.dp)
                     )
                     Text(
                         text = stringResource(id = R.string.prize_text_menu),
-                        modifier = Modifier.padding(start = 4.dp, end = 20.dp),
-                        fontSize = 18.sp
-                    )
-                }
-                Spacer(modifier = Modifier.height(15.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(55.dp)
-                        .padding(start = 8.dp, end = 20.dp)
-                        .clickable {
-                            /*TODO*/
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.hints_icon),
-                        contentDescription = "Dicas",
-                        modifier = Modifier
-                            .size(55.dp)
-                            .padding(start = 12.dp, end = 4.dp)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.hints_menu),
                         modifier = Modifier.padding(start = 4.dp, end = 20.dp),
                         fontSize = 18.sp
                     )
@@ -856,6 +835,32 @@ fun ProfileActivityBody() {
                     )
                     Text(
                         text = stringResource(id = R.string.favorites_menu),
+                        modifier = Modifier.padding(start = 4.dp, end = 20.dp),
+                        fontSize = 18.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .padding(start = 8.dp, end = 20.dp)
+                        .clickable {
+                            val toChat =
+                                Intent(context, Chat::class.java)
+                            context.startActivity(toChat)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Image(
+                        painter = painterResource(id = R.drawable.chat_icon),
+                        contentDescription = "Chat",
+                        modifier = Modifier
+                            .size(55.dp)
+                            .padding(start = 12.dp, end = 4.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.chat),
                         modifier = Modifier.padding(start = 4.dp, end = 20.dp),
                         fontSize = 18.sp
                     )

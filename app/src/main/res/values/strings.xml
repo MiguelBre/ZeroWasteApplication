@@ -86,6 +86,7 @@
     <string name="not_found_reedemed">Nenhum cupom resgatado</string>
     <string name="not_found_favorited">Nenhum Catador Favoritado!</string>
     <string name="todo_favorited">Favorite catadores para que apareçam aqui.</string>
+    <string name="chat">Chat</string>
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
@@ -98,5 +99,7 @@
     <string name="title_activity_edit_profile_catador">EditProfileCatadorActivity</string>
     <string name="title_activity_page_slider">PageSliderActivity</string>
     <string name="title_activity_aceitar_coleta">AceitarColetaActivity</string>
+    <string name="title_activity_chat">Chat</string>
+    <string name="title_activity_chat_messages">ChatMessages</string>
     <string name="sair_cupom">Sair</string>
 </resources>

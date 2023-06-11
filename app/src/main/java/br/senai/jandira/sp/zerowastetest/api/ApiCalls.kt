@@ -10,6 +10,7 @@ import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.NewCatadorFisico
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.NewCatadorJuridico
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.SignResponseCatador
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelGerador.GeradorFavorito
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelGerador.NewGeradorFisico
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelGerador.NewGeradorJuridico
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelGerador.SignResponseGerador
@@ -74,5 +75,8 @@ interface ApiCalls {
 
     @GET("/favoritar/{id}")
     fun getFavoritos(@Path("id") id: Int, @Header("Authorization") token: String): Call<List<Favoritos>>
+
+    @GET("favoritar/geradores/{id}")
+    fun getGeradoresFavoritos(@Header("Authorization") token: String, @Path("id") id: Int): Call<List<GeradorFavorito>>
 
 }

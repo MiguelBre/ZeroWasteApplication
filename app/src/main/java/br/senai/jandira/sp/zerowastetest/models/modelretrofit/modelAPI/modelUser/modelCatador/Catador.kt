@@ -5,8 +5,7 @@ data class Catador(
 
     var id: Int = 0,
     var id_usuario: Int = 0,
-    var materiais_catador: List<MateriaisCatador>? = null,
-    val user: UserData?
+    var materiais_catador: List<MateriaisCatador>? = null
 
 )
 

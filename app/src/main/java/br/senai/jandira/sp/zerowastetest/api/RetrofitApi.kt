@@ -11,7 +11,7 @@ class RetrofitApi {
         private lateinit var instanceCep: Retrofit
         private lateinit var instanceGeoCode: Retrofit
         private lateinit var instanceLogistic: Retrofit
-
+        private lateinit var instanceChat: Retrofit
 
         fun getMainApi(): Retrofit{
             if (!Companion::instanceMain.isInitialized) {
@@ -55,6 +55,17 @@ class RetrofitApi {
                     .build()
             }
             return instanceLogistic
+        }
+
+        fun getChatApi(): Retrofit{
+            if (!Companion::instanceChat.isInitialized) {
+                instanceChat = Retrofit
+                    .Builder()
+                    .baseUrl(Constants.CHAT_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+            }
+            return instanceChat
         }
 
     }
