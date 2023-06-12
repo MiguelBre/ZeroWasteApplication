@@ -105,7 +105,9 @@ class Chat : ComponentActivity() {
                                     if (response.isSuccessful){
                                         geradorFavorito = responseFav.body()!!
                                     } else {
-                                        
+
+
+
                                     }
 
                                     var contato = listOf(Contato())

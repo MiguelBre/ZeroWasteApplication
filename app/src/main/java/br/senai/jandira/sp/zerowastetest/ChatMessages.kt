@@ -53,7 +53,7 @@ class ChatMessages : ComponentActivity() {
 
         val id = intent.getSerializableExtra("id") as? String
 //        val nome = intent.getSerializableExtra("nome") as String
-        val nome = "Hélio Ferreira"
+
 
         val chatHandler = ChatHandler()
         chatHandler.setSocketChat(cleanToken)
@@ -87,7 +87,7 @@ class ChatMessages : ComponentActivity() {
                                                         modifier = Modifier .fillMaxSize(),
                                                         color = MaterialTheme.colors.background
                                                     ) {
-                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken, nome)
+                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken)
                                                     }
                                                 }
                                             }
@@ -124,7 +124,7 @@ class ChatMessages : ComponentActivity() {
                                                                                         modifier = Modifier .fillMaxSize(),
                                                                                         color = MaterialTheme.colors.background
                                                                                     ) {
-                                                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken, nome)
+                                                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken)
                                                                                     }
                                                                                 }
                                                                             }
@@ -176,7 +176,7 @@ class ChatMessages : ComponentActivity() {
 
 
 @Composable
-fun MessageScreen(token: String, mChat: Socket, message: List<Messages>, myId: Int, cleanToken: String, nome: String) {
+fun MessageScreen(token: String, mChat: Socket, message: List<Messages>, myId: Int, cleanToken: String) {
     var messages by remember {
         mutableStateOf(message)
     }
@@ -216,7 +216,7 @@ fun MessageScreen(token: String, mChat: Socket, message: List<Messages>, myId: I
                         }
                 )
 
-                Text(text = nome, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 20.dp))
+                Text(text = "Nome do conversador", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 20.dp))
 
             }
             Box(modifier = Modifier.weight(1f).padding(16.dp)) {
