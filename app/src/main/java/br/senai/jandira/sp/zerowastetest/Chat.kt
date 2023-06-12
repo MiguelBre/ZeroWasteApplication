@@ -101,8 +101,11 @@ class Chat : ComponentActivity() {
                                     call: Call<List<GeradorFavorito>>,
                                     responseFav: Response<List<GeradorFavorito>>
                                 ) {
+                                    Log.i("response_getGeradoresFavoritos", responseFav.toString())
                                     if (response.isSuccessful){
                                         geradorFavorito = responseFav.body()!!
+                                    } else {
+                                        
                                     }
 
                                     var contato = listOf(Contato())
