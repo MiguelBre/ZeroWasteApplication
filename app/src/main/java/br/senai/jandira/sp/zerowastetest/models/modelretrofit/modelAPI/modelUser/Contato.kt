@@ -2,6 +2,7 @@ package br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUse
 
 data class Contato(
     val email: String = "",
+    val nome: String = "",
     val foto: String = "",
     val id: Int = 0
 )

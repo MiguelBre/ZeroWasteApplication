@@ -1,11 +1,13 @@
 package br.senai.jandira.sp.zerowastetest
 
 import android.content.Intent
-import android.net.DnsResolver.Callback
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,14 +19,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import br.senai.jandira.sp.zerowastetest.api.ApiCalls
 import br.senai.jandira.sp.zerowastetest.api.ChatCalls
 import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
 import br.senai.jandira.sp.zerowastetest.dataSaving.SessionManager
-import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelPedido.PedidoResponse
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelMessage.Message
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelMessage.MessageRecieve
@@ -47,6 +52,8 @@ class ChatMessages : ComponentActivity() {
         val authToken = "Bearer $cleanToken"
 
         val id = intent.getSerializableExtra("id") as? String
+//        val nome = intent.getSerializableExtra("nome") as String
+        val nome = "Hélio Ferreira"
 
         val chatHandler = ChatHandler()
         chatHandler.setSocketChat(cleanToken)
@@ -80,10 +87,67 @@ class ChatMessages : ComponentActivity() {
                                                         modifier = Modifier .fillMaxSize(),
                                                         color = MaterialTheme.colors.background
                                                     ) {
-                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken)
+                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken, nome)
                                                     }
                                                 }
                                             }
+                                        } else {
+
+                                            Log.i("not_found_messages", responseChat.toString())
+                                            chatApi.sendMessage(authToken, MessageSend(to = id.toInt(), message = "Olá"))
+                                                .enqueue(object : retrofit2.Callback<Message> {
+                                                    override fun onResponse(call: Call<Message>, responseSend: Response<Message>) {
+//                                                        if (response.isSuccessful) {
+//                                                            messages += Messages(
+//                                                                text = response.body()!!.message.text,
+//                                                                isSentByMe = true
+//                                                            )
+//                                                        }
+
+                                                        if (responseSend.isSuccessful) {
+
+                                                            chatApi.getMessages(id.toInt(), authToken)
+                                                                .enqueue(object : retrofit2.Callback<List<Message>> {
+                                                                    override fun onResponse(call: Call<List<Message>>, responseChat: Response<List<Message>>) {
+                                                                        if (responseChat.isSuccessful){
+                                                                            message = responseChat.body()!!
+                                                                            var mensagens = listOf(Messages())
+
+                                                                            message.map {
+                                                                                mensagens += Messages(text = it.message.text, isSentByMe = it.from != id.toInt())
+                                                                            }
+
+                                                                            setContent {
+                                                                                ZeroWasteTestTheme {
+                                                                                    // A surface container using the 'background' color from the theme
+                                                                                    Surface(
+                                                                                        modifier = Modifier .fillMaxSize(),
+                                                                                        color = MaterialTheme.colors.background
+                                                                                    ) {
+                                                                                        MessageScreen(authToken, mChat, mensagens, response.body()!!.id, cleanToken, nome)
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    override fun onFailure(call: Call<List<Message>>, t: Throwable) {
+                                                                        Log.i("fail", t.message.toString())
+                                                                    }
+
+                                                                })
+
+                                                        }
+
+                                                    }
+
+                                                    override fun onFailure(call: Call<Message>, t: Throwable) {
+                                                        Log.i("fail", t.message.toString())
+                                                    }
+
+                                                })
+
+
                                         }
                                     }
 
@@ -112,7 +176,7 @@ class ChatMessages : ComponentActivity() {
 
 
 @Composable
-fun MessageScreen(token: String, mChat: Socket, message: List<Messages>, myId: Int, cleanToken: String) {
+fun MessageScreen(token: String, mChat: Socket, message: List<Messages>, myId: Int, cleanToken: String, nome: String) {
     var messages by remember {
         mutableStateOf(message)
     }
@@ -131,15 +195,37 @@ fun MessageScreen(token: String, mChat: Socket, message: List<Messages>, myId: I
 
 
     Surface(color = Color.White) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Box(modifier = Modifier.weight(1f)) {
+        Column() {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    colorResource(
+                        id = R.color.dark_green
+                    )
+                ).padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                Image(painter = painterResource(id = R.drawable.back_arrow),
+                    contentDescription = "Voltar para página inicial",
+                    modifier = Modifier
+                        .size(26.dp)
+                        .clickable {
+                            val intent = Intent(context, Chat::class.java)
+                            context.startActivity(intent)
+                        }
+                )
+
+                Text(text = nome, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 20.dp))
+
+            }
+            Box(modifier = Modifier.weight(1f).padding(16.dp)) {
                 MessageList(messages = messages)
             }
             Spacer(modifier = Modifier.height(16.dp))
             MessageInput { message ->
-                // Aqui você pode lidar com a lógica para enviar a mensagem
-                val mensagemm = MessageRecieve(to = chatId, msg = message, from = cleanToken)
-                val objectMessage = Gson().toJson(mensagemm)
+                val mensagem = MessageRecieve(to = chatId, msg = message, from = cleanToken)
+                val objectMessage = Gson().toJson(mensagem)
                 mChat.emit("send-msg", objectMessage)
                 chatApi.sendMessage(token, MessageSend(to = chatId, message = message))
                     .enqueue(object : retrofit2.Callback<Message> {
@@ -184,7 +270,7 @@ fun MessageList(messages: List<Messages>) {
 @Composable
 fun MessageItem(message: Messages) {
     val backgroundColor = if (message.isSentByMe) {
-        MaterialTheme.colors.primary
+        colorResource(R.color.light_green)
     } else {
         Color.LightGray
     }
@@ -216,12 +302,30 @@ fun MessageItem(message: Messages) {
 @Composable
 fun MessageInput(onMessageSent: (String) -> Unit) {
     var textState by remember { mutableStateOf(TextFieldValue()) }
+    val focusManager = LocalFocusManager.current
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        TextField(
+
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
+        OutlinedTextField(
             value = textState,
             onValueChange = { textState = it },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            placeholder = { Text(text = "Mensagem") },
+            shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(
+                    id = R.color.light_green
+                ),
+                cursorColor = colorResource(
+                    id = R.color.dark_green
+                ),
+                backgroundColor = colorResource(
+                    id = R.color.almost_white
+                ),
+                unfocusedBorderColor = colorResource(
+                    id = R.color.dark_green
+                )
+            )
         )
         Button(
             onClick = {
@@ -230,8 +334,10 @@ fun MessageInput(onMessageSent: (String) -> Unit) {
                     onMessageSent(message)
                     textState = TextFieldValue()
                 }
+                focusManager.clearFocus()
             },
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp),
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_green))
         ) {
             Text(text = "Enviar")
         }

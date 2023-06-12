@@ -15,7 +15,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import br.senai.jandira.sp.zerowastetest.api.ApiCalls
 import br.senai.jandira.sp.zerowastetest.api.RetrofitApi
@@ -68,7 +70,7 @@ class Chat : ComponentActivity() {
                                     var contato = listOf(Contato())
 
                                     contact.map {
-                                        contato += Contato(email = it.catador.user.email, foto = it.catador.user.foto, id = it.catador.id_usuario)
+                                        contato += Contato(email = it.catador.user.email, nome = it.catador.user.pessoa_fisica!![0].nome, foto = it.catador.user.foto, id = it.catador.id_usuario)
                                     }
 
 
@@ -106,7 +108,7 @@ class Chat : ComponentActivity() {
                                     var contato = listOf(Contato())
 
                                     geradorFavorito.map {
-                                        contato += Contato(email = it.gerador.user.email, foto = it.gerador.user.foto, id = it.gerador.id_usuario)
+                                        contato += Contato(email = it.gerador.user.email, nome = it.gerador.user.pessoa_fisica[0].nome, foto = it.gerador.user.foto, id = it.gerador.id_usuario)
                                     }
 
                                     setContent {
@@ -153,7 +155,7 @@ fun ContactListScreen(contacts: List<Contato>) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Lista de Contatos") })
+            TopAppBar(title = { Text("Lista de Contatos", color = Color.White) }, backgroundColor = colorResource(id = R.color.dark_green))
         },
         content = {
             ContactList(contacts = contacts)
@@ -187,6 +189,7 @@ fun ContactItem(contact: Contato, context: Context) {
                 val intent = Intent(context, ChatMessages::class.java)
                 Log.i("id", contact.id.toString())
                 intent.putExtra("id", contact.id.toString())
+//                intent.putExtra("username", contact.nome.toString())
                 context.startActivity(intent)
             },
         verticalAlignment = Alignment.CenterVertically
@@ -195,7 +198,7 @@ fun ContactItem(contact: Contato, context: Context) {
         Column(
             modifier = Modifier.padding(start = 16.dp)
         ) {
-            Text(text = contact.email, style = MaterialTheme.typography.h6)
+            Text(text = contact.nome, style = MaterialTheme.typography.h6)
         }
     }
 }

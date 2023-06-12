@@ -158,13 +158,23 @@ fun ProfileContent() {
 
             if (userType == "Catador"){
 
+                materiaisCatador = dadosUsuario.catador!![0].materiais_catador!!
+
                 apiCalls.getMateriaisNotCollected(id = dadosUsuario.catador?.get(0)?.id).enqueue(object : Callback<List<Materials>> {
                     override fun onResponse(call: Call<List<Materials>>, response: Response<List<Materials>>) {
 
-                        for (i in response.body()!!) {
+                        if(response.isSuccessful){
 
-                            materialsList.add(i)
+                            for (i in response.body()!!) {
 
+                                materialsList.add(i)
+
+                            }
+
+                        } else {
+                            Log.e("no_materials_can_be_added", response.toString())
+
+                            materialsList.add(Materials(0, "Você recolhe todos materiais"))
                         }
 
                     }

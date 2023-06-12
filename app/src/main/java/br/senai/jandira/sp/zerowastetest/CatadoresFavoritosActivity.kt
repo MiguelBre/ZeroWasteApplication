@@ -38,6 +38,9 @@ import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelRati
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.Favoritar
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.Favoritos
 import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.UserData
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.Catador
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.CatadorFavorito
+import br.senai.jandira.sp.zerowastetest.models.modelretrofit.modelAPI.modelUser.modelCatador.MateriaisCatador
 import br.senai.jandira.sp.zerowastetest.ui.theme.ZeroWasteTestTheme
 import com.google.gson.Gson
 import retrofit2.Call
@@ -91,7 +94,8 @@ class CatadoresFavoritosActivity : ComponentActivity() {
                                 }
                                 else if (responseFavoritos.code() == 404){
 
-                                    val noFavoritos = listOf(Favoritos(id = 0, catador = null, id_catador = 0, id_gerador = 0))
+                                    val noFavoritos = listOf(Favoritos(id = 0, catador = CatadorFavorito(0, 0, 0, UserData()), id_catador = 0, id_gerador = 0)
+                                    )
 
                                     setContent {
                                         ZeroWasteTestTheme {
